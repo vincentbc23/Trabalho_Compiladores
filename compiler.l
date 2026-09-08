@@ -20,9 +20,9 @@
     void exibir_tabela_simbolos(void);
 
 %}
-digit [0-9]
+digit [1-9]
 lether [a-zA-Z]
-number [-]?{digit}+(\.{digit}+)?
+number ([-]{digit})|0|{digit}+(\.{digit}+)?
 id {lether}+({lether}|{digit})*
 delim [ \t]
 ws {delim}+
@@ -64,10 +64,10 @@ other .
     fprintf(yyout,"%d(%d): %s (READ)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 "int" { 
-    fprintf(yyout,"%d(%d): %s (TIPO)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (INT)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 "float" { 
-    fprintf(yyout,"%d(%d): %s (TIPO)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (FLOAT)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 {id} { /*@leoeliasr: registro de identificador reconheciso na regra if*/
 
