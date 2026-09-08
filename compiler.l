@@ -3,8 +3,22 @@
 %{ 
     /*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
     #include<stdio.h>
+    /* @leoeliasr bibliotecas usadas só pelas funcoes da tabela */
+    #include<string.h>
+    #include<stdlib.h>
 
     int column_number = 1;
+
+/* @leoeliasr Aqui o amarzenameto da tabela de simbolos perguntar se tem valores de limites minimo ou maximo no enunciado não fala */
+
+    char tabela_simbolos[1000][256];
+    int quantidade_simbolos = 0;
+
+/* chamando as funçoes do flex antes das Definitions */
+
+    void inserir_simbolo(char *lexema);
+    void exibir_tabela_simbolos(void);
+
 %}
 digit [0-9]
 lether [a-zA-Z]
@@ -55,7 +69,10 @@ other .
 "float" { 
     fprintf(yyout,"%d(%d): %s (TIPO)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
-{id} { 
+{id} { /*@leoeliasr: registro de identificador reconheciso na regra if*/
+
+    inserir_simbolo(yytext);
+
     fprintf(yyout,"%d(%d): %s (ID)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 "<="|"<>"|"<"|">="|">"|"=" { 
@@ -84,10 +101,37 @@ other .
 
 %%
 /*−−−−−−−−−−−−−−−−−−−−−−−− User subrotines −−−−−−−−−−−−−−−−−−−−−−−−*/
+/* @leoeliasr: função que constroe a tabela durante a analise   */
+void inserir_simbolo(char *lexema){
+    int i;
+    for(i = 0; i < quantidade_simbolos; i++){
+        if(strcmp(tabela_simbolos[i], lexema) == 0){
+
+            return;
+        }
+    }
+
+    if(quantidade_simbolos == 1000 || strlen(lexema) >= 256){
+        fprintf(yyout, "Symbol table limit on line %d and column %d. Input -> \"%s\"\n", yylineno, column_number, lexema);
+    }
+    strcpy(tabela_simbolos[quantidade_simbolos], lexema);
+    quantidade_simbolos++;
+}
+void exibir_tabela_simbolos(void){
+    int i;
+    fprintf(yyout, "\nTabela de simbolos\n");
+    fprintf(yyout, "Indice | Identificador\n");
+    for(i = 0; i < quantidade_simbolos; i++){
+        fprintf(yyout, "%d | %s\n", i, tabela_simbolos[i]);
+    }
+}
+
 int main(int argc, char *argv[]){
     yyin = fopen(argv[1], "r");
     yyout=stdout;
     yylex();
+    /* @leoeliasr */
+    exibir_tabela_simbolos();
     fclose(yyin);
     return 0;
 }

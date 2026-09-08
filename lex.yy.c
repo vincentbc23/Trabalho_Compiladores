@@ -1,5 +1,5 @@
 
-#line 2 "lex.yy.c"
+#line 3 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -518,10 +518,24 @@ char *yytext;
 #line 4 "compiler.l"
     /*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
     #include<stdio.h>
+    /* @leoeliasr bibliotecas usadas só pelas funcoes da tabela */
+    #include<string.h>
+    #include<stdlib.h>
 
     int column_number = 1;
-#line 523 "lex.yy.c"
-#line 524 "lex.yy.c"
+
+/* @leoeliasr Aqui o amarzenameto da tabela de simbolos perguntar se tem valores de limites minimo ou maximo no enunciado não fala */
+
+    char tabela_simbolos[1000][256];
+    int quantidade_simbolos = 0;
+
+/* chamando as funçoes do flex antes das Definitions */
+
+    void inserir_simbolo(char *lexema);
+    void exibir_tabela_simbolos(void);
+
+#line 538 "lex.yy.c"
+#line 539 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -738,13 +752,13 @@ YY_DECL
 		}
 
 	{
-#line 18 "compiler.l"
+#line 32 "compiler.l"
 
 
-#line 21 "compiler.l"
+#line 35 "compiler.l"
     /*−−−−−−−−−−−−−−−−−−−−−−−−−−−−− Rules −−−−−−−−−−−−−−−−−−−−−−−−−−−−−*/
 
-#line 747 "lex.yy.c"
+#line 762 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -813,14 +827,14 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 23 "compiler.l"
+#line 37 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; 
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "compiler.l"
+#line 40 "compiler.l"
 {
 
 }
@@ -828,7 +842,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 29 "compiler.l"
+#line 43 "compiler.l"
 {
 
 }
@@ -836,119 +850,122 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 32 "compiler.l"
+#line 46 "compiler.l"
 { 
     column_number = 1; 
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 35 "compiler.l"
+#line 49 "compiler.l"
 { 
     column_number += yyleng; 
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 38 "compiler.l"
+#line 52 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (IF)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 41 "compiler.l"
+#line 55 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (ELSE)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 44 "compiler.l"
+#line 58 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (WHILE)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 47 "compiler.l"
+#line 61 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (PRINT)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 50 "compiler.l"
+#line 64 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (READ)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 53 "compiler.l"
+#line 67 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (TIPO)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 56 "compiler.l"
+#line 70 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (TIPO)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 59 "compiler.l"
-{ 
+#line 73 "compiler.l"
+{ /*@leoeliasr: registro de identificador reconheciso na regra if*/
+
+    inserir_simbolo(yytext);
+
     fprintf(yyout,"%d(%d): %s (ID)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 62 "compiler.l"
+#line 79 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (RELOP)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 65 "compiler.l"
+#line 82 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (PONTUACAO)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 68 "compiler.l"
+#line 85 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (PLUS)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 71 "compiler.l"
+#line 88 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (MINUS)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 74 "compiler.l"
+#line 91 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (MULT)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 77 "compiler.l"
+#line 94 "compiler.l"
 { 
     fprintf(yyout,"%d(%d): %s (DIV)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 80 "compiler.l"
+#line 97 "compiler.l"
 {
     fprintf(yyout, "Lexical error on line %d and column %d. Input -> \"%s\"\n", yylineno, column_number, yytext);
     column_number+=yyleng;
@@ -956,10 +973,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 86 "compiler.l"
+#line 103 "compiler.l"
 ECHO;
 	YY_BREAK
-#line 962 "lex.yy.c"
+#line 980 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1976,13 +1993,40 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 86 "compiler.l"
+#line 103 "compiler.l"
 
 /*−−−−−−−−−−−−−−−−−−−−−−−− User subrotines −−−−−−−−−−−−−−−−−−−−−−−−*/
+/* @leoeliasr: função que constroe a tabela durante a analise   */
+void inserir_simbolo(char *lexema){
+    int i;
+    for(i = 0; i < quantidade_simbolos; i++){
+        if(strcmp(tabela_simbolos[i], lexema) == 0){
+
+            return;
+        }
+    }
+
+    if(quantidade_simbolos == 1000 || strlen(lexema) >= 256){
+        fprintf(yyout, "Symbol table limit on line %d and column %d. Input -> \"%s\"\n", yylineno, column_number, lexema);
+    }
+    strcpy(tabela_simbolos[quantidade_simbolos], lexema);
+    quantidade_simbolos++;
+}
+void exibir_tabela_simbolos(void){
+    int i;
+    fprintf(yyout, "\nTabela de simbolos\n");
+    fprintf(yyout, "Indice | Identificador\n");
+    for(i = 0; i < quantidade_simbolos; i++){
+        fprintf(yyout, "%d | %s\n", i, tabela_simbolos[i]);
+    }
+}
+
 int main(int argc, char *argv[]){
     yyin = fopen(argv[1], "r");
     yyout=stdout;
     yylex();
+    /* @leoeliasr */
+    exibir_tabela_simbolos();
     fclose(yyin);
     return 0;
 }

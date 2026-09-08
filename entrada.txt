@@ -1,4 +1,4 @@
--98 12 32 <= + asd if else - print
+/* -98 12 32 <= + asd if else - print
 //ricardinho
 ___ASD
 /*
@@ -11,4 +11,5 @@ ads
 
 */
 
-*/
+*/ */
+int x; float y; x = x + y;
