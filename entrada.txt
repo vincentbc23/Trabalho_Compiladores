@@ -13,3 +13,8 @@ ads
 
 */ */
 int x; float y; x = x + y; -0 -9
+
+/*
+asdasd
+
+asd
