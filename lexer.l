@@ -17,9 +17,9 @@
 %}
     /* Definições de padrões */
 digit [0-9]
-lether [a-zA-Z]
+letter [a-zA-Z]
 number ((-[1-9])|{digit}){digit}*(\.{digit}+)?
-id {lether}+({lether}|{digit}|_)*
+id {letter}+({letter}|{digit}|_)*
 delim [ \t]
 ws {delim}+
 comment "//".*
