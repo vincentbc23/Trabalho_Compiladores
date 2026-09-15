@@ -33,6 +33,7 @@ other .
 {number} { 
     fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; 
 }
+
     /* Ignora os comentários */
 {comment} { 
 
@@ -76,6 +77,7 @@ other .
 "int"|"float" {
     fprintf(yyout,"%d(%d): %s (TYPE)\n", yylineno,column_number,yytext); column_number+=yyleng;
 }
+
     /* Identificadores */
 {id} { 
     inserir_simbolo(yytext);
@@ -142,6 +144,14 @@ other .
 }
 
     /* Erro léxico */
+"/*" {
+    fprintf(yyout, "Lexical error on line %d and column %d. Unclosed comment\n", yylineno, column_number, yytext);
+    column_number+=yyleng;   
+}
+"*/" {
+    fprintf(yyout, "Lexical error on line %d and column %d. Unopened comment\n", yylineno, column_number);
+    column_number+=yyleng;
+}
 {other} { 
     fprintf(yyout, "Lexical error on line %d and column %d. Input -> \"%s\"\n", yylineno, column_number, yytext);
     column_number+=yyleng;
