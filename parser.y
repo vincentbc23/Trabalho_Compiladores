@@ -8,9 +8,14 @@ extern int yylex();
 extern int yylineno;
 extern int column_number;
 extern char* yytext;
+extern FILE *yyin;
+extern FILE *yyout;
 
 /* Função de erro exigida pelo Bison */
 void yyerror(const char *s);
+
+/* Tabela de símbolos (definida no lexer) */
+void exibir_tabela_simbolos(void);
 %}
 
 /*--------------------------- Declaração de Tokens ---------------------------*/
@@ -137,4 +142,13 @@ expr:
 void yyerror(const char *s) {
     fprintf(stderr, "Erro sintatico na linha %d, coluna %d: %s (proximo a '%s')\n", 
             yylineno, column_number, s, yytext);
+}
+
+int main(int argc, char *argv[]){
+    yyin = fopen(argv[1], "r");
+    yyout=stdout;
+    yyparse();
+    exibir_tabela_simbolos();
+    fclose(yyin);
+    return 0;
 }

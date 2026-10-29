@@ -17,7 +17,7 @@ echo "Compilando o analisador sintatico (Bison)..."
 bison -d parser.y
 
 echo "Compilando o analisador lexico (Flex)..."
-flex -o lex.yy.c compiler.l
+flex -o lex.yy.c lexer.l
 
 echo "Gerando o executavel..."
 gcc -o main parser.tab.c lex.yy.c

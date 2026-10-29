@@ -4,6 +4,7 @@
     /* Definições */
     #include<stdio.h>
     #include<string.h>
+    #include "parser.tab.h"
 
     int column_number = 1;
 
@@ -24,6 +25,7 @@ delim [ \t]
 ws {delim}+
 comment "//".*
 multComment    "/*"([^*]|\*+[^*/])*\*+"/"
+unclosedComment "/*"([^*]|\*+[^*/])*\**
 other .
 %%
 %{
@@ -31,7 +33,8 @@ other .
 %}
     /* Números */
 {number} { 
-    fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; 
+    fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    return strchr(yytext, '.') ? NUM_FLOAT : NUM_INT;
 }
 
     /* Ignora os comentários */
@@ -58,96 +61,100 @@ other .
 
     /* Palavras reservadas */
 "if" { 
-    fprintf(yyout,"%d(%d): %s (IF)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (IF)\n", yylineno,column_number,yytext); column_number+=yyleng; return IF;
 }
 "else" {
-    fprintf(yyout,"%d(%d): %s (ELSE)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (ELSE)\n", yylineno,column_number,yytext); column_number+=yyleng; return ELSE;
 }
 "while" {
-    fprintf(yyout,"%d(%d): %s (WHILE)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (WHILE)\n", yylineno,column_number,yytext); column_number+=yyleng; return WHILE;
 }
 "print" {
-    fprintf(yyout,"%d(%d): %s (PRINT)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (PRINT)\n", yylineno,column_number,yytext); column_number+=yyleng; return PRINT;
 }
 "read" {
-    fprintf(yyout,"%d(%d): %s (READ)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (READ)\n", yylineno,column_number,yytext); column_number+=yyleng; return READ;
 }
 
     /* Tipos*/
 "int"|"float" {
-    fprintf(yyout,"%d(%d): %s (TYPE)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (TYPE)\n", yylineno,column_number,yytext); column_number+=yyleng; return TYPE;
 }
 
     /* Identificadores */
 {id} { 
     inserir_simbolo(yytext);
-    fprintf(yyout,"%d(%d): %s (ID)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (ID)\n", yylineno,column_number,yytext); column_number+=yyleng; return ID;
 }
 
     /* Operadores relacionais */
 "<="|"!="|"<"|">="|">"|"==" { 
-    fprintf(yyout,"%d(%d): %s (RELOP)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (RELOP)\n", yylineno,column_number,yytext); column_number+=yyleng; return RELOP;
 }
 
     /* Pontuação */
 ";" { 
-    fprintf(yyout,"%d(%d): %s (SEMICOLON)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (SEMICOLON)\n", yylineno,column_number,yytext); column_number+=yyleng; return SEMI;
 }
 "," {
-    fprintf(yyout,"%d(%d): %s (COMMA)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (COMMA)\n", yylineno,column_number,yytext); column_number+=yyleng; return COMMA;
 }
 "(" {
-    fprintf(yyout,"%d(%d): %s (LPAREN)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (LPAREN)\n", yylineno,column_number,yytext); column_number+=yyleng; return LPAREN;
 }
 ")" {
-    fprintf(yyout,"%d(%d): %s (RPAREN)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (RPAREN)\n", yylineno,column_number,yytext); column_number+=yyleng; return RPAREN;
 }
 "{" {
-    fprintf(yyout,"%d(%d): %s (LBRACE)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (LBRACE)\n", yylineno,column_number,yytext); column_number+=yyleng; return LBRACE;
 }
 "}" {
-    fprintf(yyout,"%d(%d): %s (RBRACE)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (RBRACE)\n", yylineno,column_number,yytext); column_number+=yyleng; return RBRACE;
 }
 
     /* Operadores Lógicos */
 "&&" { 
-    fprintf(yyout,"%d(%d): %s (AND)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (AND)\n", yylineno,column_number,yytext); column_number+=yyleng; return AND;
 }
 "||" {
-    fprintf(yyout,"%d(%d): %s (OR)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (OR)\n", yylineno,column_number,yytext); column_number+=yyleng; return OR;
 }
 "!" {
-    fprintf(yyout,"%d(%d): %s (NOT)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (NOT)\n", yylineno,column_number,yytext); column_number+=yyleng; return NOT;
 }
 
 
     /* Operadores aritméticos */
 "+" { 
-    fprintf(yyout,"%d(%d): %s (PLUS)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (PLUS)\n", yylineno,column_number,yytext); column_number+=yyleng; return PLUS;
 }
 "-" {
-    fprintf(yyout,"%d(%d): %s (MINUS)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (MINUS)\n", yylineno,column_number,yytext); column_number+=yyleng; return MINUS;
 }
 "*" {
-    fprintf(yyout,"%d(%d): %s (MULT)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (MULT)\n", yylineno,column_number,yytext); column_number+=yyleng; return MULT;
 }
 "/" {
-    fprintf(yyout,"%d(%d): %s (DIV)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (DIV)\n", yylineno,column_number,yytext); column_number+=yyleng; return DIV;
 }
 "%" {
-    fprintf(yyout,"%d(%d): %s (MOD)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (MOD)\n", yylineno,column_number,yytext); column_number+=yyleng; return MOD;
 }
 
     /* Atribuição */
 "=" {
-    fprintf(yyout,"%d(%d): %s (ASSIGN)\n", yylineno,column_number,yytext); column_number+=yyleng;
+    fprintf(yyout,"%d(%d): %s (ASSIGN)\n", yylineno,column_number,yytext); column_number+=yyleng; return ASSIGN;
 }
 
     /* Erro léxico */
-"/*" {
-    fprintf(yyout, "Lexical error on line %d and column %d. Unclosed comment\n", yylineno, column_number, yytext);
-    column_number+=yyleng;   
+{unclosedComment} {
+    int linha_inicio = yylineno;
+    for (int i = 0; i < yyleng; i++) {
+        if (yytext[i] == '\n') linha_inicio--;
+    }
+    fprintf(yyout, "Lexical error on line %d and column %d. Unclosed comment\n", linha_inicio, column_number);
 }
+
 "*/" {
     fprintf(yyout, "Lexical error on line %d and column %d. Unopened comment\n", yylineno, column_number);
     column_number+=yyleng;
@@ -185,13 +192,4 @@ void exibir_tabela_simbolos(void){
     for(i = 0; i < quantidade_simbolos; i++){
         fprintf(yyout, "%d | %s\n", i, tabela_simbolos[i]);
     }
-}
-
-int main(int argc, char *argv[]){
-    yyin = fopen(argv[1], "r");
-    yyout=stdout;
-    yylex();
-    exibir_tabela_simbolos();
-    fclose(yyin);
-    return 0;
 }
