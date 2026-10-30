@@ -20,7 +20,7 @@ void exibir_tabela_simbolos(void);
 
 /*--------------------------- Declaração de Tokens ---------------------------*/
 /* Palavras-chave */
-%token IF ELSE WHILE PRINT READ RETURN TYPE
+%token IF ELSE WHILE PRINT READ TYPE
 
 /* Identificadores e Literais numéricos */
 %token ID NUM_INT NUM_FLOAT
@@ -32,9 +32,6 @@ void exibir_tabela_simbolos(void);
 %token SEMI COMMA LPAREN RPAREN LBRACE RBRACE
 
 /*--------------------------- Precedência e Associatividade ------------------*/
-/* Resolve a ambiguidade do 'dangling else'. 
-   O ELSE tem precedência maior, forçando o shift (associa ao IF mais próximo) */
-%nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
 
 /* Precedência de operadores (da menor para a maior) */
@@ -77,11 +74,15 @@ statements:
     | /* vazio */
     ;
 
-/* Comandos aceitos pela linguagem */
+/* Um comando é casado ou aberto */
 statement:
+    matched_stmt
+    | open_stmt
+    ;
+
+/* Comandos que não terminam com outro comando */
+other_stmt:
     assign_stmt
-    | if_stmt
-    | while_stmt
     | block_stmt
     | print_stmt
     | read_stmt
@@ -97,16 +98,20 @@ assign_stmt:
     ID ASSIGN expr SEMI
     ;
 
-/* Condicional IF/ELSE com tratamento de dangling else */
-if_stmt:
-    IF LPAREN expr RPAREN statement %prec LOWER_THAN_ELSE
-    | IF LPAREN expr RPAREN statement ELSE statement
+/* Comando casado */
+matched_stmt:
+    IF LPAREN expr RPAREN matched_stmt ELSE matched_stmt
+    | WHILE LPAREN expr RPAREN matched_stmt
+    | other_stmt
     ;
 
-/* Laço de repetição */
-while_stmt:
-    WHILE LPAREN expr RPAREN statement
+/* Comando aberto */
+open_stmt:
+    IF LPAREN expr RPAREN statement
+    | IF LPAREN expr RPAREN matched_stmt ELSE open_stmt
+    | WHILE LPAREN expr RPAREN open_stmt
     ;
+
 
 /* Chamadas de funções predefinidas de E/S */
 print_stmt:
@@ -140,7 +145,7 @@ expr:
 
 /* Reporta erros sintáticos com linha e coluna conforme exigência do enunciado */
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro sintatico na linha %d, coluna %d: %s (proximo a '%s')\n", 
+    fprintf(stderr, "Sintax Error na linha %d, coluna %d: %s (proximo a '%s')\n", 
             yylineno, column_number, s, yytext);
 }
 

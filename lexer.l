@@ -19,7 +19,8 @@
     /* Definições de padrões */
 digit [0-9]
 letter [a-zA-Z]
-number ((-[1-9])|{digit}){digit}*(\.{digit}+)?
+int_number ((-[1-9])|{digit}){digit}*
+float_number {int_number}\.{digit}+
 id {letter}+({letter}|{digit}|_)*
 delim [ \t]
 ws {delim}+
@@ -32,9 +33,11 @@ other .
     /* Regras */
 %}
     /* Números */
-{number} { 
-    fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng;
-    return strchr(yytext, '.') ? NUM_FLOAT : NUM_INT;
+{int_number} { 
+    fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; return NUM_INT;
+}
+{float_number} { 
+    fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; return NUM_FLOAT;
 }
 
     /* Ignora os comentários */

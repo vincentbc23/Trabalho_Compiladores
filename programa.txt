@@ -1,14 +1,82 @@
-// comentario de linha
-int x, total_1;
-float y;
+// ===== Programa de teste: lexer + parser =====
+// comentario de linha (deve ser ignorado)
+
+/* Declaracoes: tipos int e float, uma ou varias variaveis */
+int x, y, contador;
+int total_1;
+float media, taxa2;
+
 /* comentario
-   de bloco */ read(x);
-y = -2.5 * 10 / 3.14 - -7 % 2 + 0;
-while (x >= 1 && !(y == 0) || x != -0) {
-    if (x < 5) { print(x); } else { print(y); }
+   de bloco em
+   varias linhas */ read(x);
+read(y);
+
+// Atribuicoes com literais inteiros, floats e negativos
+contador = 0;
+total_1 = -15;
+taxa2 = 3.14;
+media = -2.5;
+
+// Expressoes aritmeticas: precedencia, associatividade e parenteses
+total_1 = x + y * 2 - 10 / 5 % 3;
+total_1 = (x + y) * (contador - 1);
+media = x - y - contador;
+media = - x * 2;
+media = - - y;
+media = x - -3 + 0.5;
+
+// Expressoes relacionais e logicas
+if (x < y) print(x);
+if (x <= y && y >= 0) print(y);
+if (x == y || x != 0) print(contador);
+if (!(x > y) && !contador || taxa2 == 3.14) print(taxa2);
+
+// if/else simples
+if (x > 0) x = 1; else x = 2;
+
+// dangling else: o else pertence ao if mais proximo (if (y > 0))
+if (x > 0) if (y > 0) print(1); else print(2);
+
+// else forcado para o if de fora com bloco
+if (x > 0) { if (y > 0) print(3); } else print(4);
+
+// cadeia else if
+if (x < 0) print(-1); else if (x == 0) print(0); else print(1);
+
+// while com bloco e comandos compostos
+while (contador < 10) {
+    contador = contador + 1;
+    total_1 = total_1 + contador;
+}
+
+// while aninhado, if sem else dentro do while
+while (x > 0) {
+    while (y > 0) y = y - 1;
+    if (x % 2 == 0) print(x);
     x = x - 1;
 }
-z = x <= y > 4 @ $;
+
+// while dentro de if com else
+if (x != 0) while (y < 5) y = y + 1; else print(y);
+
+// blocos vazios e aninhados
+{ }
+{ { print(media); } }
+
+// Erros lexicos (o parser continua: os caracteres sao descartados)
+y = x + 1 @ $;
 */
-/*
-teste2 123 
+
+// Erros sintaticos (o parser para no primeiro)
+x = ;
+if (x > 0 print(x);
+print(x)
+x = 2 * + ;
+read(x + 1);
+else x = 1;
+int z;
+while (x > 0) {
+
+// comentario nao fechado: consome o resto do arquivo
+/* daqui pra frente nada vira token
+x = 999;

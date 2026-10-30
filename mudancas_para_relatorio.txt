@@ -1,0 +1,37 @@
+MUDANCAS PARA O RELATORIO (desde a versao base da Etapa 2)
+
+Correcao da Etapa 1 (apontada pelo professor)
+- Comentario /* nao fechado: antes a regra "/*" so reportava o erro e o
+  conteudo continuava virando tokens. Agora o padrao unclosedComment consome
+  ate o fim do arquivo e reporta o erro com a linha/coluna de inicio.
+
+Integracao Flex + Bison (padrao da apostila, Aula 12)
+- lexer.l inclui "parser.tab.h" e cada regra de token faz return TOKEN.
+- Nomes dos tokens alinhados com o parser (ex.: ";" retorna SEMI).
+- Numero separado em int_number (NUM_INT) e float_number (NUM_FLOAT).
+- main saiu do lexer e foi para o parser.y, chamando yyparse().
+- compiler.sh corrigido (usava compiler.l em vez de lexer.l).
+- Token RETURN removido (nao era usado).
+
+Dangling else (apostila, Aula 7)
+- Trocado o %prec LOWER_THAN_ELSE pela gramatica casado/aberto
+  (matched_stmt / open_stmt / other_stmt), sem conflitos no Bison.
+- Adaptacao: o while foi dividido do mesmo jeito (corpo casado -> casado,
+  corpo aberto -> aberto), pois tambem termina com um comando.
+
+Erros sintaticos
+- yyerror reporta linha, coluna e token proximo; o parser para no primeiro erro.
+
+Teste
+- programa.txt reescrito cobrindo toda a gramatica, erros lexicos e erros
+  sintaticos no final.
+
+Number 
+- Number foi substituido por NUM_INT e NUM_FLOAT para se adequar ao parser 
+
+Pendencias / decisoes a discutir
+- Coluna do erro sintatico sai no fim do token (usar column_number - yyleng).
+- Erro no fim do arquivo aparece como "proximo a ''".
+- x-1 sem espaco da erro sintatico (o "-" faz parte do numero no lexer);
+  ambiguidade do "-" citada no enunciado.
+- Sem recuperacao de erro (regra error / yyerrok, Exemplo 03 da apostila).
