@@ -10,6 +10,7 @@ extern int column_number;
 extern char* yytext;
 extern FILE *yyin;
 extern FILE *yyout;
+extern int yyleng;
 
 /* Função de erro exigida pelo Bison */
 void yyerror(const char *s);
@@ -30,9 +31,6 @@ void exibir_tabela_simbolos(void);
 %token PLUS MINUS MULT DIV MOD ASSIGN
 %token AND OR NOT
 %token SEMI COMMA LPAREN RPAREN LBRACE RBRACE
-
-/*--------------------------- Precedência e Associatividade ------------------*/
-%nonassoc ELSE
 
 /* Precedência de operadores (da menor para a maior) */
 %right ASSIGN
@@ -145,8 +143,13 @@ expr:
 
 /* Reporta erros sintáticos com linha e coluna conforme exigência do enunciado */
 void yyerror(const char *s) {
-    fprintf(stderr, "Sintax Error na linha %d, coluna %d: %s (proximo a '%s')\n", 
-            yylineno, column_number, s, yytext);
+    if (yytext[0] == '\0') {
+        fprintf(yyout, "Syntax Error na linha %d, coluna %d: %s (fim do arquivo)\n",
+                yylineno, column_number, s);
+    } else {
+        fprintf(yyout, "Syntax Error na linha %d, coluna %d: %s (proximo a '%s')\n",
+                yylineno, column_number - yyleng, s, yytext);
+    }
 }
 
 int main(int argc, char *argv[]){

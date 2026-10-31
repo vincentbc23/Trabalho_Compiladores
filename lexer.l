@@ -19,7 +19,7 @@
     /* Definições de padrões */
 digit [0-9]
 letter [a-zA-Z]
-int_number ((-[1-9])|{digit}){digit}*
+int_number {digit}+
 float_number {int_number}\.{digit}+
 id {letter}+({letter}|{digit}|_)*
 delim [ \t]

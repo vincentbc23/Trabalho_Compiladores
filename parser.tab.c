@@ -80,6 +80,7 @@ extern int column_number;
 extern char* yytext;
 extern FILE *yyin;
 extern FILE *yyout;
+extern int yyleng;
 
 /* Função de erro exigida pelo Bison */
 void yyerror(const char *s);
@@ -87,7 +88,7 @@ void yyerror(const char *s);
 /* Tabela de símbolos (definida no lexer) */
 void exibir_tabela_simbolos(void);
 
-#line 91 "parser.tab.c"
+#line 92 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -547,10 +548,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    51,    51,    56,    57,    62,    67,    68,    73,    74,
-      79,    80,    85,    86,    87,    88,    93,    98,   103,   104,
-     105,   110,   111,   112,   118,   122,   127,   128,   129,   130,
-     131,   132,   133,   134,   135,   136,   137,   138,   139,   140
+       0,    49,    49,    54,    55,    60,    65,    66,    71,    72,
+      77,    78,    83,    84,    85,    86,    91,    96,   101,   102,
+     103,   108,   109,   110,   116,   120,   125,   126,   127,   128,
+     129,   130,   131,   132,   133,   134,   135,   136,   137,   138
 };
 #endif
 
@@ -1169,7 +1170,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1173 "parser.tab.c"
+#line 1174 "parser.tab.c"
 
       default: break;
     }
@@ -1362,14 +1363,19 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 143 "parser.y"
+#line 141 "parser.y"
 
 /*--------------------------- Funções Auxiliares ---------------------------*/
 
 /* Reporta erros sintáticos com linha e coluna conforme exigência do enunciado */
 void yyerror(const char *s) {
-    fprintf(stderr, "Sintax Error na linha %d, coluna %d: %s (proximo a '%s')\n", 
-            yylineno, column_number, s, yytext);
+    if (yytext[0] == '\0') {
+        fprintf(yyout, "Syntax Error na linha %d, coluna %d: %s (fim do arquivo)\n",
+                yylineno, column_number, s);
+    } else {
+        fprintf(yyout, "Syntax Error na linha %d, coluna %d: %s (proximo a '%s')\n",
+                yylineno, column_number - yyleng, s, yytext);
+    }
 }
 
 int main(int argc, char *argv[]){

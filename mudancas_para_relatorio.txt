@@ -21,17 +21,25 @@ Dangling else (apostila, Aula 7)
 
 Erros sintaticos
 - yyerror reporta linha, coluna e token proximo; o parser para no primeiro erro.
+- Coluna corrigida: o lexer soma yyleng antes do return, entao o yyerror usa
+  column_number - yyleng para apontar o inicio do token.
 
 Teste
 - programa.txt reescrito cobrindo toda a gramatica, erros lexicos e erros
   sintaticos no final.
 
-Number 
-- Number foi substituido por NUM_INT e NUM_FLOAT para se adequar ao parser 
+Number
+- Number foi substituido por NUM_INT e NUM_FLOAT para se adequar ao parser
+
+Ambiguidade do "-" (decisao da Etapa 1 revista)
+- Antes o "-" fazia parte do numero no lexer, entao x-1 virava ID e NUM
+  (-1) e dava erro sintatico.
+- Agora int_number e {digit}+ (numeros sempre positivos). O negativo e
+  resolvido no parser: MINUS binario pela precedencia de PLUS/MINUS e
+  unario por MINUS expr %prec UMINUS (como no Exemplo 02 da apostila).
+- Consequencia: -15 agora aparece como MINUS e NUMBER, e -0 passa a ser
+  aceito (MINUS 0).
 
 Pendencias / decisoes a discutir
-- Coluna do erro sintatico sai no fim do token (usar column_number - yyleng).
-- Erro no fim do arquivo aparece como "proximo a ''".
-- x-1 sem espaco da erro sintatico (o "-" faz parte do numero no lexer);
-  ambiguidade do "-" citada no enunciado.
+- Erro no fim do arquivo aparece como "proximo a ''" e coluna 0.
 - Sem recuperacao de erro (regra error / yyerrok, Exemplo 03 da apostila).
